@@ -3,6 +3,7 @@ package com.n26.challenge.controller;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Timer;
+import java.util.logging.Logger;
 
 import javax.inject.Singleton;
 
@@ -11,9 +12,17 @@ public class CronSynchronizer {
 	private static Long timeThreshold = getThreshold();
 	private static ZoneId zoneId = ZoneId.systemDefault();
 	
+	private final static Logger log = Logger.getLogger(CronSynchronizer.class.getName());
+	
 	public CronSynchronizer() {
 		super();
 		Timer cron = new Timer();
+		SynchronizerTask task = new SynchronizerTask();
+		
+		log.info("Starting Timer Task");
+		
+		//run every second
+		cron.scheduleAtFixedRate(task, 0, 1000);
 		
 	}
 	

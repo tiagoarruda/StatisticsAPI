@@ -4,7 +4,9 @@ import java.util.logging.Logger;
 
 import javax.inject.Singleton;
 
+import com.n26.challenge.controller.CronSynchronizer;
 import com.n26.challenge.controller.TransactionController;
+import com.n26.challenge.exception.ExpiredTransaction;
 
 @Singleton
 public class TransactionStatistics {
@@ -14,16 +16,22 @@ public class TransactionStatistics {
 	private Double sum = 0.0;
 	private Double avg = 0.0;
 	private Double max = 0.0;
-	private Long maxOccurTime;
-	private Double min = 0.0;
-	private Long minOccurTime;
+	private Double maxSecondLevel = 0.0;
+	private Long maxOccurTime = 0L;
+	private Long maxSecondLevelOccurTime = 0L;
+	private Double min = Double.MAX_VALUE;
+	private Double minSecondLevel = Double.MAX_VALUE;
+	private Long minOccurTime = 0L;
+	private Long minSecondLevelOccurTime = 0L;
 	private Double count = 0.0;
 	
 	
 	
-	public void addTransaction(Transaction t) {
-		//TODO don't execute if the time was before the threshold 
-		//if (t.getTimestamp())
+	public void addTransaction(Transaction t) throws ExpiredTransaction {
+		//Statiscs only for the time threshold - if transaction happened before just return
+		if (t.getTimestamp() < CronSynchronizer.getTimeThreshold()) {
+			throw new ExpiredTransaction();
+		}
 		
 		//sum of all values
 		sum += t.getAmount();
@@ -37,14 +45,21 @@ public class TransactionStatistics {
 		}
 		
 		//maximum value
-		//TODO remove max value if it's older than the threshold
 		if (t.getAmount() > this.max) {
 			this.max = t.getAmount();
+			this.maxOccurTime = t.getTimestamp();
+		} else if (t.getAmount() > this.maxSecondLevel && t.getTimestamp() > this.maxOccurTime) {
+			this.maxSecondLevel = t.getAmount();
+			this.maxSecondLevelOccurTime = t.getTimestamp();
 		}
 		
 		//minimum value
 		if (t.getAmount() < this.min) {
 			this.min = t.getAmount();
+			this.minOccurTime = t.getTimestamp();
+		} else if (t.getAmount() < this.minSecondLevel && t.getTimestamp() > this.minOccurTime) {
+			this.minSecondLevel = t.getAmount();
+			this.minSecondLevelOccurTime = t.getTimestamp();
 		}
 		
 		this.count++;
@@ -72,9 +87,31 @@ public class TransactionStatistics {
 		return avg;
 	}
 	public Double getMax() {
+		if (maxOccurTime < CronSynchronizer.getTimeThreshold()) {
+			if (maxSecondLevel >= CronSynchronizer.getTimeThreshold()) {
+				max = maxSecondLevel;
+				maxOccurTime = maxSecondLevelOccurTime;
+				maxSecondLevel = 0.0;
+				maxSecondLevelOccurTime = 0L;
+			} else {
+				max = 0.0;
+				maxOccurTime = 0L;
+			}
+		}
 		return max;
 	}
 	public Double getMin() {
+		if (minOccurTime < CronSynchronizer.getTimeThreshold()) {
+			if (minSecondLevelOccurTime >= CronSynchronizer.getTimeThreshold()) {
+				min = minSecondLevel;
+				minOccurTime = minSecondLevelOccurTime;
+				minSecondLevel = Double.MAX_VALUE;
+				minSecondLevelOccurTime = 0L;
+			} else {
+				min = Double.MAX_VALUE;
+				minOccurTime = 0L;
+			}
+		}
 		return min;
 	}
 	public Double getCount() {
