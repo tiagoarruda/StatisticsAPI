@@ -3,6 +3,7 @@ package com.n26.challenge.ws;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.n26.challenge.controller.CronSynchronizer;
 import com.n26.challenge.controller.TransactionController;
 import com.n26.challenge.transaction.Transaction;
 import com.n26.challenge.transaction.TransactionStatistics;
@@ -34,7 +35,7 @@ public class StatisticsWSTest {
 		ws.postTransaction(t);
 		
 		assert(statistics.getSum() == 20.8);
-		assert(statistics.getAvg() == 20.8 / TransactionController.statisticsTimeFrame);
+		assert(statistics.getAvg() == 20.8 / CronSynchronizer.statisticsTimeFrame);
 		assert(statistics.getMax() == 20.8);
 		assert(statistics.getMin() == 20.8);
 		assert(statistics.getCount() == 1);

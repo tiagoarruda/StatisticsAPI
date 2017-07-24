@@ -16,6 +16,12 @@ public class CronSynchronizer {
 	
 	private final static Logger log = Logger.getLogger(CronSynchronizer.class.getName());
 	
+	public static final int statisticsTimeFrame = 60;
+	
+	public CronSynchronizer() {
+		initCron();
+	}
+	
 	@PostConstruct
 	public void initCron() {
 		Timer cron = new Timer();
@@ -33,7 +39,7 @@ public class CronSynchronizer {
 	}
 	
 	private static Long getThreshold() {
-		LocalDateTime threshold = LocalDateTime.now().minusSeconds(TransactionController.statisticsTimeFrame);
+		LocalDateTime threshold = LocalDateTime.now().minusSeconds(statisticsTimeFrame);
 		ZoneId zoneId = ZoneId.systemDefault();
 		long epoch = threshold.atZone(zoneId).toEpochSecond();
 		

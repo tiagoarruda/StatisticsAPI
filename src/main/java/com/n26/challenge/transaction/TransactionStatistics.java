@@ -42,7 +42,7 @@ public class TransactionStatistics {
 		
 		//average
 		try {
-			avg	= sum / TransactionController.statisticsTimeFrame; 
+			avg	= sum / CronSynchronizer.statisticsTimeFrame; 
 		} catch (ArithmeticException ae) {
 			avg = 0.0;
 			log.severe("ERROR: The time frame to get statistics is configured to 0");
@@ -75,7 +75,7 @@ public class TransactionStatistics {
 		
 		//average
 		try {
-			avg	= sum / TransactionController.statisticsTimeFrame; 
+			avg	= sum / CronSynchronizer.statisticsTimeFrame; 
 		} catch (ArithmeticException ae) {
 			avg = 0.0;
 			log.severe("ERROR: The time frame to get statistics is configured to 0");

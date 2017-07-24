@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import com.n26.challenge.transaction.Transaction;
-import com.n26.challenge.transaction.TransactionStatistics;
 
 public class SynchronizerTask extends TimerTask {
 	
@@ -15,19 +14,16 @@ public class SynchronizerTask extends TimerTask {
 	
 	@Inject
 	TransactionController controller;
-	
-	@Inject
-	TransactionStatistics statistics;
 
 	@Override
 	public void run() {
 		log.info("Update threshold");
 		
 		CronSynchronizer.updateThreshold();
-		List<Transaction> transactions = controller.getTransacions().get(CronSynchronizer.getTimeThreshold()); 
+		List<Transaction> transactions = TransactionController.transactions.get(CronSynchronizer.getTimeThreshold()); 
 		if (transactions != null) {
 			for (Transaction t : transactions) {
-				statistics.decrementTransaction(t);
+				TransactionController.statistics.decrementTransaction(t);
 			}
 		}
 	}
@@ -35,11 +31,5 @@ public class SynchronizerTask extends TimerTask {
 	public void setController(TransactionController controller) {
 		this.controller = controller;
 	}
-
-	public void setStatistics(TransactionStatistics statistics) {
-		this.statistics = statistics;
-	}
-	
-	
 	
 }

@@ -1,11 +1,9 @@
 package com.n26.challenge.transaction;
 
-import static org.junit.Assert.fail;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.n26.challenge.controller.TransactionController;
+import com.n26.challenge.controller.CronSynchronizer;
 import com.n26.challenge.exception.ExpiredTransaction;
 
 public class TransactionStatisticsTest {
@@ -35,7 +33,7 @@ public class TransactionStatisticsTest {
 		}
 		
 		assert(statistics.getSum() == 20.8 + 20.9);
-		assert(statistics.getAvg() == (20.8 + 20.9) / TransactionController.statisticsTimeFrame);
+		assert(statistics.getAvg() == (20.8 + 20.9) / CronSynchronizer.statisticsTimeFrame);
 		assert(statistics.getMax() == 20.9);
 		assert(statistics.getMin() == 20.8);
 		assert(statistics.getCount() == 2);

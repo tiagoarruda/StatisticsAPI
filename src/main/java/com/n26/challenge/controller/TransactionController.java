@@ -17,10 +17,11 @@ public class TransactionController {
 	
 	private final static Logger log = Logger.getLogger(TransactionController.class.getName());
 	
-	public static final Integer statisticsTimeFrame = 60;
-	private Map<Long, List<Transaction>> transactions = new HashMap<Long, List<Transaction>>();
+	public static Map<Long, List<Transaction>> transactions = new HashMap<Long, List<Transaction>>();
 	
+	//TODO Create a dependency injection for these two
 	public static TransactionStatistics statistics = new TransactionStatistics();
+	public static CronSynchronizer cron = new CronSynchronizer();
 
 	public void addTransaction(Transaction t) throws ExpiredTransaction {
 		log.info("New trasaction at time" + t.getTimestamp() + "\n Transaction amount: " + t.getAmount());
@@ -37,10 +38,6 @@ public class TransactionController {
 	
 	public TransactionStatistics getStatistics() {
 		return statistics;
-	}
-	
-	public Map<Long, List<Transaction>> getTransacions() {
-		return transactions;
 	}
 	
 }

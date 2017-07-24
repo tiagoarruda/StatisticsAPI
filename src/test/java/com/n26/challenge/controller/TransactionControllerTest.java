@@ -51,7 +51,7 @@ public class TransactionControllerTest {
 		}
 		
 		assert(statistics.getSum() == 20.8);
-		assert(statistics.getAvg() == 20.8 / TransactionController.statisticsTimeFrame);
+		assert(statistics.getAvg() == 20.8 / CronSynchronizer.statisticsTimeFrame);
 		assert(statistics.getMax() == 20.8);
 		assert(statistics.getMin() == 20.8);
 		assert(statistics.getCount() == 1);
@@ -75,7 +75,7 @@ public class TransactionControllerTest {
 		}
 		
 		assert(statistics.getSum() == 20.8 + 20.9);
-		assert(statistics.getAvg() == (20.8 + 20.9) / TransactionController.statisticsTimeFrame);
+		assert(statistics.getAvg() == (20.8 + 20.9) / CronSynchronizer.statisticsTimeFrame);
 		assert(statistics.getMax() == 20.9);
 		assert(statistics.getMin() == 20.8);
 		assert(statistics.getCount() == 2);
