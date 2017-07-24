@@ -5,17 +5,19 @@ import java.time.ZoneId;
 import java.util.Timer;
 import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Startup;
 import javax.inject.Singleton;
 
+@Startup
 @Singleton
 public class CronSynchronizer {
 	private static Long timeThreshold = getThreshold();
-	private static ZoneId zoneId = ZoneId.systemDefault();
 	
 	private final static Logger log = Logger.getLogger(CronSynchronizer.class.getName());
 	
-	public CronSynchronizer() {
-		super();
+	@PostConstruct
+	public void initCron() {
 		Timer cron = new Timer();
 		SynchronizerTask task = new SynchronizerTask();
 		
@@ -32,6 +34,7 @@ public class CronSynchronizer {
 	
 	private static Long getThreshold() {
 		LocalDateTime threshold = LocalDateTime.now().minusSeconds(TransactionController.statisticsTimeFrame);
+		ZoneId zoneId = ZoneId.systemDefault();
 		long epoch = threshold.atZone(zoneId).toEpochSecond();
 		
 		return epoch;

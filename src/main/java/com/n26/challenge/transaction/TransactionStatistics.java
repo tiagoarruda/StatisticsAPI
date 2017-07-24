@@ -2,6 +2,8 @@ package com.n26.challenge.transaction;
 
 import java.util.logging.Logger;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.inject.Singleton;
 
 import com.n26.challenge.controller.CronSynchronizer;
@@ -9,6 +11,7 @@ import com.n26.challenge.controller.TransactionController;
 import com.n26.challenge.exception.ExpiredTransaction;
 
 @Singleton
+@Lock(LockType.READ)
 public class TransactionStatistics {
 	
 	private final static Logger log = Logger.getLogger(TransactionStatistics.class.getName());
@@ -28,6 +31,7 @@ public class TransactionStatistics {
 	
 	
 	public void addTransaction(Transaction t) throws ExpiredTransaction {
+		log.info("Current threshold: " + CronSynchronizer.getTimeThreshold());
 		//Statiscs only for the time threshold - if transaction happened before just return
 		if (t.getTimestamp() < CronSynchronizer.getTimeThreshold()) {
 			throw new ExpiredTransaction();
@@ -87,6 +91,9 @@ public class TransactionStatistics {
 		return avg;
 	}
 	public Double getMax() {
+		if (maxOccurTime == 0L) {
+			return 0.0;
+		}
 		if (maxOccurTime < CronSynchronizer.getTimeThreshold()) {
 			if (maxSecondLevel >= CronSynchronizer.getTimeThreshold()) {
 				max = maxSecondLevel;
@@ -101,6 +108,9 @@ public class TransactionStatistics {
 		return max;
 	}
 	public Double getMin() {
+		if (minOccurTime == 0L) {
+			return 0.0;
+		}
 		if (minOccurTime < CronSynchronizer.getTimeThreshold()) {
 			if (minSecondLevelOccurTime >= CronSynchronizer.getTimeThreshold()) {
 				min = minSecondLevel;
@@ -116,6 +126,26 @@ public class TransactionStatistics {
 	}
 	public Double getCount() {
 		return count;
+	}
+
+	public void setSum(Double sum) {
+		this.sum = sum;
+	}
+
+	public void setAvg(Double avg) {
+		this.avg = avg;
+	}
+
+	public void setMax(Double max) {
+		this.max = max;
+	}
+
+	public void setMin(Double min) {
+		this.min = min;
+	}
+
+	public void setCount(Double count) {
+		this.count = count;
 	}
 	
 }

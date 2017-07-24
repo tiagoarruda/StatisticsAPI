@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.n26.challenge.exception.ExpiredTransaction;
@@ -21,8 +20,7 @@ public class TransactionController {
 	public static final Integer statisticsTimeFrame = 60;
 	private Map<Long, List<Transaction>> transactions = new HashMap<Long, List<Transaction>>();
 	
-	@Inject
-	private TransactionStatistics statistics;
+	public static TransactionStatistics statistics = new TransactionStatistics();
 
 	public void addTransaction(Transaction t) throws ExpiredTransaction {
 		log.info("New trasaction at time" + t.getTimestamp() + "\n Transaction amount: " + t.getAmount());
@@ -37,7 +35,12 @@ public class TransactionController {
 		tList.add(t);
 	}
 	
-	public void setStatistics(TransactionStatistics statistics) {
-		this.statistics = statistics;
+	public TransactionStatistics getStatistics() {
+		return statistics;
 	}
+	
+	public Map<Long, List<Transaction>> getTransacions() {
+		return transactions;
+	}
+	
 }
